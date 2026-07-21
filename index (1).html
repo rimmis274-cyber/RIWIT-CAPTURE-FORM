@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Capture — RIWIT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f7f5f2;
+      --white: #ffffff;
+      --red: #d81f26;
+      --red-dark: #a91419;
+      --red-light: #fdeaea;
+      --yellow: #f9b800;
+      --yellow-dark: #e0a500;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e6e0d8;
+      --success: #16a34a;
+      --error: #dc2626;
+      --shadow-lg: 0 8px 32px rgba(216,31,38,0.14);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 16px 48px;
+    }
+
+    /* Top bar */
+    .topbar {
+      width: calc(100% + 32px);
+      background: var(--red);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      height: 56px;
+      box-shadow: 0 2px 8px rgba(216,31,38,0.25);
+      margin: 0 -16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .fk-logo {
+      font-weight: 800;
+      font-size: 21px;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .fk-logo span { color: var(--yellow); }
+    .topbar-div { width: 1px; height: 20px; background: rgba(255,255,255,0.22); }
+    .topbar-title { color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; }
+    .topbar-badge {
+      margin-left: auto;
+      background: var(--yellow);
+      color: #1a1a2e;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 560px;
+      margin-top: 28px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .card-hero {
+      background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+      padding: 26px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-hero::before {
+      content: '';
+      position: absolute;
+      right: -30px; top: -30px;
+      width: 130px; height: 130px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+    }
+    .card-hero::after {
+      content: '';
+      position: absolute;
+      right: 50px; bottom: -50px;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(249,184,0,0.14);
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(249,184,0,0.18);
+      border: 1px solid rgba(249,184,0,0.4);
+      color: var(--yellow);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 10px;
+    }
+    .hero-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.15;
+      letter-spacing: -0.4px;
+    }
+    .hero-title span { color: var(--yellow); }
+    .hero-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 5px;
+      font-weight: 500;
+    }
+
+    /* Form */
+    .card-body { padding: 26px 30px 34px; }
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 18px;
+    }
+    .field { margin-bottom: 16px; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .field-num {
+      background: var(--red-light);
+      color: var(--red);
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      width: 17px; height: 17px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      background: #fafbfa;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 10px 13px;
+      border-radius: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      outline: none;
+      transition: all 0.18s;
+    }
+    input[type="text"]:focus, input[type="number"]:focus {
+      border-color: var(--red);
+      background: var(--white);
+      box-shadow: 0 0 0 3px var(--red-light);
+    }
+    input::placeholder { color: #c4bfb4; font-size: 11px; }
+    input[type="number"] { -moz-appearance: textfield; }
+    input[type="number"]::-webkit-inner-spin-button { display: none; }
+
+    /* Section divider */
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 8px 0 18px;
+    }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--red);
+      background: var(--red-light);
+      padding: 5px 12px;
+      border-radius: 100px;
+    }
+
+    /* Image boxes */
+    .img-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .img-box {
+      border: 1.5px dashed var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fafbfa;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      transition: all 0.2s;
+    }
+    .img-box.has-image {
+      border-style: solid;
+      border-color: var(--red);
+      background: var(--red-light);
+    }
+    .img-box-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+    .img-box.has-image .img-box-label { color: var(--red); }
+
+    .capture-btn {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 8px;
+      border-radius: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .capture-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
+    .capture-btn.up:hover { background: var(--yellow); color: var(--text); border-color: var(--yellow-dark); }
+    input[type="file"] { display: none; }
+
+    .preview-wrap { display: none; border-radius: 8px; overflow: hidden; position: relative; }
+    .preview-wrap.active { display: block; }
+    .preview-wrap img { width: 100%; height: 95px; object-fit: cover; display: block; }
+    .remove-btn {
+      position: absolute; top: 5px; right: 5px;
+      background: rgba(0,0,0,0.55);
+      border: none; color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .remove-btn:hover { background: var(--error); }
+
+    /* Submit */
+    .submit-btn {
+      width: 100%;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      margin-top: 22px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(216,31,38,0.3);
+    }
+    .submit-btn:hover { background: var(--red-dark); }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { background: #a0aec0; box-shadow: none; cursor: not-allowed; transform: none; }
+    .fk-tag {
+      background: var(--yellow);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 5px;
+    }
+
+    #status {
+      margin-top: 14px;
+      padding: 11px 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
+    #status.success { background: #dcfce7; color: var(--success); display: block; }
+    #status.error   { background: #fee2e2; color: var(--error); display: block; }
+    #status.loading { background: var(--red-light); color: var(--red); display: block; }
+
+    /* Camera modal */
+    #cam-modal {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,15,30,0.97);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    #cam-modal.active { display: flex; }
+    #video {
+      width: 100%; max-width: 420px;
+      border-radius: 18px; background: #000;
+      border: 2px solid rgba(216,31,38,0.4);
+    }
+    #video.mirrored { transform: scaleX(-1); }
+    .cam-ui { margin-top: 26px; display: flex; align-items: center; gap: 18px; }
+    .shutter {
+      width: 66px; height: 66px;
+      background: #fff; border-radius: 50%;
+      border: 5px solid rgba(255,255,255,0.2);
+      cursor: pointer; transition: transform 0.1s;
+      box-shadow: 0 0 0 3px var(--red);
+    }
+    .shutter:active { transform: scale(0.88); }
+    .cam-pill {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff; padding: 11px 20px;
+      border-radius: 50px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .cam-pill:hover { background: rgba(255,255,255,0.15); }
+    .flip-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff; width: 46px; height: 46px;
+      border-radius: 50%; cursor: pointer; font-size: 17px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="fk-logo">RIWIT<span>★</span></div>
+  <div class="topbar-div"></div>
+  <div class="topbar-title">Saidham Hyperlocal</div>
+  <div class="topbar-badge">Internal</div>
+</div>
+
+<div class="card">
+  <div class="card-hero">
+    <div class="hero-tag">📦 Ops Portal</div>
+    <div class="hero-title">RIWIT <span>Product Capture</span> Form</div>
+    <div class="hero-sub">Fill all fields and attach product images before submitting</div>
+  </div>
+
+  <div class="card-body">
+    <div class="fields-grid">
+      <div class="field">
+        <label><span class="field-num">1</span>Box ID</label>
+        <input type="text" id="boxId" placeholder="e.g. BOX001" autocomplete="off">
+      </div>
+      <div class="field">
+        <label><span class="field-num">2</span>WID</label>
+        <input type="text" id="wid" placeholder="e.g. WID123456" autocomplete="off">
+      </div>
+      <div class="field">
+        <label><span class="field-num">3</span>FSN</label>
+        <input type="text" id="fsn" placeholder="Flipkart Serial No." autocomplete="off">
+      </div>
+      <div class="field">
+        <label><span class="field-num">4</span>EAN</label>
+        <input type="text" id="ean" placeholder="Scan or type" autocomplete="off">
+      </div>
+      <div class="field">
+        <label><span class="field-num">5</span>Quantity</label>
+        <input type="number" id="qty" placeholder="0" autocomplete="off">
+      </div>
+      <div class="field">
+        <label><span class="field-num">6</span>Vertical</label>
+        <input type="text" id="vertical" placeholder="e.g. Electronics" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-line"></div>
+      <div class="section-label">📸 Photo Capture</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="img-grid">
+      <div class="img-box" id="box1">
+        <div class="img-box-label">Image 1</div>
+        <button class="capture-btn" onclick="openCam(1)">📷 Camera</button>
+        <button class="capture-btn up" onclick="document.getElementById('file1').click()">🖼 Upload</button>
+        <input type="file" id="file1" accept="image/*" onchange="handleFile(1,event)">
+        <div class="preview-wrap" id="wrap1"><img id="prev1"><button class="remove-btn" onclick="removeImage(1)">✕</button></div>
+      </div>
+      <div class="img-box" id="box2">
+        <div class="img-box-label">Image 2</div>
+        <button class="capture-btn" onclick="openCam(2)">📷 Camera</button>
+        <button class="capture-btn up" onclick="document.getElementById('file2').click()">🖼 Upload</button>
+        <input type="file" id="file2" accept="image/*" onchange="handleFile(2,event)">
+        <div class="preview-wrap" id="wrap2"><img id="prev2"><button class="remove-btn" onclick="removeImage(2)">✕</button></div>
+      </div>
+      <div class="img-box" id="box3">
+        <div class="img-box-label">Image 3</div>
+        <button class="capture-btn" onclick="openCam(3)">📷 Camera</button>
+        <button class="capture-btn up" onclick="document.getElementById('file3').click()">🖼 Upload</button>
+        <input type="file" id="file3" accept="image/*" onchange="handleFile(3,event)">
+        <div class="preview-wrap" id="wrap3"><img id="prev3"><button class="remove-btn" onclick="removeImage(3)">✕</button></div>
+      </div>
+      <div class="img-box" id="box4">
+        <div class="img-box-label">Image 4</div>
+        <button class="capture-btn" onclick="openCam(4)">📷 Camera</button>
+        <button class="capture-btn up" onclick="document.getElementById('file4').click()">🖼 Upload</button>
+        <input type="file" id="file4" accept="image/*" onchange="handleFile(4,event)">
+        <div class="preview-wrap" id="wrap4"><img id="prev4"><button class="remove-btn" onclick="removeImage(4)">✕</button></div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+      🚀 Submit Record <span class="fk-tag">RW</span>
+    </button>
+    <div id="status"></div>
+  </div>
+</div>
+
+<div id="cam-modal">
+  <video id="video" autoplay playsinline></video>
+  <canvas id="canvas" style="display:none"></canvas>
+  <div class="cam-ui">
+    <button class="cam-pill" onclick="closeCam()">✕ Close</button>
+    <div class="shutter" onclick="takeSnap()"></div>
+    <button class="flip-btn" onclick="switchCam()">🔄</button>
+  </div>
+</div>
+
+<script>
+  // ── REPLACE WITH YOUR APPS SCRIPT DEPLOYMENT URL ─────────────────────────
+  const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const images = {1: null, 2: null, 3: null, 4: null};
+  let stream = null, camMode = "environment", activeCamSlot = null;
+
+  async function openCam(slot) {
+    activeCamSlot = slot;
+    document.getElementById('cam-modal').classList.add('active');
+    await startStream();
+  }
+  async function startStream() {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: camMode, width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+    } catch {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    }
+    const v = document.getElementById('video');
+    v.srcObject = stream;
+    v.className = camMode === "user" ? "mirrored" : "";
+  }
+  function switchCam() {
+    camMode = camMode === "user" ? "environment" : "user";
+    startStream();
+  }
+  function closeCam() {
+    document.getElementById('cam-modal').classList.remove('active');
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+  function takeSnap() {
+    const v = document.getElementById('video');
+    const c = document.getElementById('canvas');
+    c.width = 1280; c.height = 720;
+    const ctx = c.getContext('2d');
+    if (camMode === "user") { ctx.translate(1280, 0); ctx.scale(-1, 1); }
+    ctx.drawImage(v, 0, 0, 1280, 720);
+    setImage(activeCamSlot, c.toDataURL("image/jpeg", 0.88));
+    closeCam();
+  }
+  function handleFile(slot, e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => setImage(slot, ev.target.result);
+    reader.readAsDataURL(file);
+  }
+  function setImage(slot, dataUrl) {
+    images[slot] = dataUrl;
+    document.getElementById('prev' + slot).src = dataUrl;
+    document.getElementById('wrap' + slot).classList.add('active');
+    document.getElementById('box' + slot).classList.add('has-image');
+  }
+  function removeImage(slot) {
+    images[slot] = null;
+    document.getElementById('file' + slot).value = '';
+    document.getElementById('wrap' + slot).classList.remove('active');
+    document.getElementById('box' + slot).classList.remove('has-image');
+  }
+  async function submitForm() {
+    const btn = document.getElementById('submitBtn');
+    const st  = document.getElementById('status');
+    const data = {
+      boxId:    document.getElementById('boxId').value.trim(),
+      wid:      document.getElementById('wid').value.trim(),
+      fsn:      document.getElementById('fsn').value.trim(),
+      ean:      document.getElementById('ean').value.trim(),
+      qty:      document.getElementById('qty').value.trim(),
+      vertical: document.getElementById('vertical').value.trim(),
+      images:   [images[1], images[2], images[3], images[4]]
+    };
+    if (!data.wid) {
+      st.className = 'error';
+      st.textContent = '⚠️ WID is required before submitting.';
+      return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Submitting...';
+    st.className = 'loading';
+    st.textContent = 'Syncing with Google Sheets...';
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      st.className = 'success';
+      st.textContent = '✅ Record submitted successfully!';
+      ['boxId','wid','fsn','ean','qty','vertical']
+        .forEach(id => document.getElementById(id).value = '');
+      [1,2,3,4].forEach(removeImage);
+    } catch(e) {
+      st.className = 'error';
+      st.textContent = '❌ Network error. Please try again.';
+    }
+    btn.disabled = false;
+    btn.innerHTML = '🚀 Submit Record <span class="fk-tag">RW</span>';
+  }
+</script>
+</body>
+</html>
